@@ -1,0 +1,200 @@
+/**
+ * @fileoverview Firestore Security Rules for the application.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model. Each user has complete control over their own data tree,
+ * while global listing of user data is forbidden.
+ *
+ * Data Structure:
+ * All data is nested under /users/{userId}, ensuring data isolation and simplified authorization.
+ * User profiles are stored directly under the /users/{userId} path.
+ * All other entities (stock, customers, sales, expenses, logs, employees) are stored as subcollections under /users/{userId}.
+ *
+ * Key Security Decisions:
+ * - User listing is explicitly disallowed to prevent information leakage and potential misuse.
+ * - All write operations (create, update, delete) require the user to be signed in.
+ * - All write operations are restricted to the owning user.
+ * - The rules are structured to be highly auditable and maintainable by using helper functions for common checks.
+ * - Timestamps are not validated in this prototype phase.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Enforces that the user is signed in.
+     * @return {bool} True if the user is signed in.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * @description Checks if the request is made by the owner of the document.
+     * @param {string} userId - The user ID to check against.
+     * @return {bool} True if the request is made by the owner.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * @description Checks if the request is made by the owner of an existing document.
+     *              This function combines the ownership check with an existence check.
+     * @param {string} userId - The user ID to check against.
+     * @return {bool} True if the request is made by the owner and the document exists.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Rule for the root `/users` collection.
+     *              This collection is not intended for direct document creation.
+     * @path /users
+     * @allow (create) - N/A - No documents should be directly created in this collection.
+     * @deny (create) - Any attempt to create a document directly in `/users`.
+     * @principle Prevents direct creation of documents in the root `/users` collection.
+     */
+    match /users {
+        allow get: if false;
+        allow list: if false;
+        allow create: if false;
+        allow update: if false;
+        allow delete: if false;
+    }
+
+    /**
+     * @description Defines security rules for user profile documents.
+     * @path /users/{userId}
+     * @allow (get) User can read own profile.
+     * @allow (create) User can create their own profile if the userId matches their auth.uid.
+     * @allow (update) User can update their own profile.
+     * @allow (delete) User can delete their own profile.
+     * @deny (get) Another user tries to read this profile.
+     * @deny (create) Another user tries to create a profile with this userId.
+     * @principle Enforces user-ownership: Only the authenticated user can read, create, update, or delete their own profile.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.email is string && request.resource.data.fullName is string;
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Defines security rules for egg stock entries.
+     * @path /users/{userId}/stock/{stockId}
+     * @allow (get) User can read own stock entries.
+     * @allow (create) User can create stock entries under their user ID.
+     * @allow (update) User can update their own stock entries.
+     * @allow (delete) User can delete their own stock entries.
+     * @deny (get) Another user tries to read this stock entry.
+     * @deny (create) Another user tries to create a stock entry under another user's ID.
+     * @principle Enforces user-ownership: Only the authenticated user can read, create, update, or delete their own stock entries.
+     */
+    match /users/{userId}/stock/{stockId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id is string;
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Defines security rules for customer records.
+     * @path /users/{userId}/customers/{customerId}
+     * @allow (get) User can read own customer records.
+     * @allow (create) User can create customer records under their user ID.
+     * @allow (update) User can update their own customer records.
+     * @allow (delete) User can delete their own customer records.
+     * @deny (get) Another user tries to read this customer record.
+     * @deny (create) Another user tries to create a customer record under another user's ID.
+     * @principle Enforces user-ownership: Only the authenticated user can read, create, update, or delete their own customer records.
+     */
+    match /users/{userId}/customers/{customerId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id is string;
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Defines security rules for sales records.
+     * @path /users/{userId}/sales/{saleId}
+     * @allow (get) User can read own sales records.
+     * @allow (create) User can create sales records under their user ID.
+     * @allow (update) User can update their own sales records.
+     * @allow (delete) User can delete their own sales records.
+     * @deny (get) Another user tries to read this sales record.
+     * @deny (create) Another user tries to create a sales record under another user's ID.
+     * @principle Enforces user-ownership: Only the authenticated user can read, create, update, or delete their own sales records.
+     */
+    match /users/{userId}/sales/{saleId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id is string;
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Defines security rules for expense records.
+     * @path /users/{userId}/expenses/{expenseId}
+     * @allow (get) User can read own expense records.
+     * @allow (create) User can create expense records under their user ID.
+     * @allow (update) User can update their own expense records.
+     * @allow (delete) User can delete their own expense records.
+     * @deny (get) Another user tries to read this expense record.
+     * @deny (create) Another user tries to create an expense record under another user's ID.
+     * @principle Enforces user-ownership: Only the authenticated user can read, create, update, or delete their own expense records.
+     */
+    match /users/{userId}/expenses/{expenseId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id is string;
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Defines security rules for activity log entries.
+     * @path /users/{userId}/logs/{logId}
+     * @allow (get) User can read own activity log entries.
+     * @allow (create) User can create activity log entries under their user ID.
+     * @allow (update) User can update their own activity log entries.
+     * @allow (delete) User can delete their own activity log entries.
+     * @deny (get) Another user tries to read this activity log entry.
+     * @deny (create) Another user tries to create an activity log entry under another user's ID.
+     * @principle Enforces user-ownership: Only the authenticated user can read, create, update, or delete their own activity log entries.
+     */
+    match /users/{userId}/logs/{logId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id is string;
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Defines security rules for employee records.
+     * @path /users/{userId}/employees/{employeeId}
+     * @allow (get) User can read own employee records.
+     * @allow (create) User can create employee records under their user ID.
+     * @allow (update) User can update their own employee records.
+     * @allow (delete) User can delete their own employee records.
+     * @deny (get) Another user tries to read this employee record.
+     * @deny (create) Another user tries to create an employee record under another user's ID.
+     * @principle Enforces user-ownership: Only the authenticated user can read, create, update, or delete their own employee records.
+     */
+    match /users/{userId}/employees/{employeeId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id is string;
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}

@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 97%;
+    --foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 224 71.4% 4.1%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 220 13% 91%;
+    --secondary-foreground: 224 71.4% 4.1%;
+    --muted: 220 13% 91%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 220 13% 88%;
+    --accent-foreground: 224 71.4% 4.1%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 13% 85%;
+    --input: 220 13% 91%;
+    --ring: 224 71.4% 4.1%;
+    --radius: 0.8rem;
+    --chart-1: 262.1 83.3% 57.8%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    
+    --sidebar-width: 16rem;
+    --sidebar-width-icon: 3.5rem;
+
+    --custom-bg: rgb(203 203 203);
+    --custom-fg: hsl(var(--foreground));
+    --custom-border: white;
+    --custom-hover-bg: white;
+    --custom-hover-fg: black;
+  }
+
+  .dark {
+    --background: 224 71.4% 4.1%;
+    --foreground: 210 20% 98%;
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 210 20% 98%;
+    --primary-foreground: 224 71.4% 4.1%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+    --accent: 215 27.9% 20.9%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 210 20% 98%;
+    --chart-1: 263.4 70% 50.4%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+
+    --custom-bg: rgb(203 203 203);
+    --custom-fg: hsl(var(--foreground));
+    --custom-border: white;
+    --custom-hover-bg: white;
+    --custom-hover-fg: black;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    overflow-y: auto;
+  }
+}
+
+.glass-card, .glass-dialog {
+  @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-lg;
+}
+
+.dark .glass-card, .dark .glass-dialog {
+  @apply bg-slate-900/70 backdrop-blur-xl border-white/10 shadow-2xl;
+}
+
+.custom-dialog-style {
+    @apply font-bold;
+    background-color: rgb(203 203 203);
+    border-color: white;
+}
+
+.btn-custom-hover {
+    @apply hover:bg-white hover:text-black;
+}
+
+    

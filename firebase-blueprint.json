@@ -1,0 +1,392 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Stores public-facing user profile information.",
+      "type": "object",
+      "properties": {
+        "fullName": {
+          "type": "string",
+          "description": "The user's full name."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "The user's email address."
+        }
+      },
+      "required": [
+        "fullName",
+        "email"
+      ]
+    },
+    "StockEntry": {
+      "title": "Stock Entry",
+      "description": "Represents an entry of product stock into the inventory.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the stock entry."
+        },
+        "quantity": {
+          "type": "number",
+          "description": "Base quantity of the product (e.g., 'butir' for eggs, 'Kg' for chicken)."
+        },
+        "stockInDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date when the items were added to stock."
+        },
+        "productName": {
+          "type": "string",
+          "description": "The name or type of the product."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of when the record was created."
+        }
+      },
+      "required": [
+        "id",
+        "quantity",
+        "stockInDate",
+        "productName",
+        "createdAt"
+      ]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Represents a customer.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the customer."
+        },
+        "name": {
+          "type": "string",
+          "description": "Customer's full name."
+        },
+        "phone": {
+          "type": "string",
+          "description": "Customer's phone number."
+        },
+        "address": {
+          "type": "string",
+          "description": "Customer's address."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of when the record was created."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "phone",
+        "address",
+        "createdAt"
+      ]
+    },
+    "Sale": {
+      "title": "Sale",
+      "description": "Represents a sales transaction.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the sale."
+        },
+        "items": {
+          "type": "array",
+          "description": "List of items included in the sale.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "productName": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "number"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "baseQuantity": {
+                "type": "number",
+                "description": "Total quantity in base unit."
+              },
+              "price": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "productName",
+              "quantity",
+              "unit",
+              "baseQuantity",
+              "price"
+            ]
+          }
+        },
+        "totalPrice": {
+          "type": "number",
+          "description": "Total price of the sale."
+        },
+        "saleDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of the sale."
+        },
+        "customerId": {
+          "type": "string",
+          "description": "ID of the customer."
+        },
+        "paymentStatus": {
+          "type": "string",
+          "enum": [
+            "Lunas",
+            "Belum Lunas"
+          ]
+        },
+        "amountPaid": {
+          "type": "number"
+        },
+        "balance": {
+          "type": "number"
+        },
+        "paymentMethod": {
+          "type": "string",
+          "enum": [
+            "Cash",
+            "Transfer Bank",
+            "QRIS"
+          ]
+        },
+        "recordedBy": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "items",
+        "totalPrice",
+        "saleDate",
+        "customerId",
+        "paymentStatus",
+        "amountPaid",
+        "balance",
+        "paymentMethod",
+        "recordedBy",
+        "createdAt"
+      ]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "Represents a business expense.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "number"
+              },
+              "price": {
+                "type": "number"
+              },
+              "subtotal": {
+                "type": "number"
+              }
+            },
+            "required": ["description", "quantity", "price", "subtotal"]
+          }
+        },
+        "totalAmount": {
+            "type": "number"
+        },
+        "expenseDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "items",
+        "totalAmount",
+        "expenseDate",
+        "createdAt"
+      ]
+    },
+    "ActivityLog": {
+      "title": "Activity Log",
+      "description": "Represents a log entry for user activity.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "activity": {
+          "type": "string"
+        },
+        "details": {
+          "type": "string"
+        },
+        "user": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "date",
+        "activity",
+        "details",
+        "user"
+      ]
+    },
+    "Employee": {
+      "title": "Employee",
+      "description": "Stores employee information for payroll.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "npwp": { "type": "string" },
+        "ptkpStatus": { "type": "string" },
+        "bankAccount": { "type": "string" },
+        "payrollHistory": {
+          "type": "array",
+          "items": { "$ref": "#/entities/PayrollHistory" }
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "ptkpStatus", "bankAccount", "createdAt"]
+    },
+    "PayrollHistory": {
+      "title": "Payroll History",
+      "description": "Represents a single payroll transaction for an employee.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "payPeriod": { "type": "string" },
+        "grossSalary": { "type": "number" },
+        "allowances": { "type": "number" },
+        "deductions": {
+          "type": "object",
+          "properties": {
+            "pph21": { "type": "number" },
+            "bpjs": { "type": "number" }
+          }
+        },
+        "netSalary": { "type": "number" },
+        "payslipUrl": { "type": "string" },
+        "processedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "payPeriod", "grossSalary", "netSalary", "processedAt"]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous",
+      "google.com"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/entities/UserProfile"
+          },
+          "description": "Stores user profile information, accessible by the owning user."
+        }
+      },
+      {
+        "path": "/users/{userId}/stock/{stockId}",
+        "definition": {
+          "entityName": "StockEntry",
+          "schema": {
+            "$ref": "#/entities/StockEntry"
+          },
+          "description": "Stock entries for a user."
+        }
+      },
+      {
+        "path": "/users/{userId}/customers/{customerId}",
+        "definition": {
+          "entityName": "Customer",
+          "schema": {
+            "$ref": "#/entities/Customer"
+          },
+          "description": "Customers belonging to a user."
+        }
+      },
+      {
+        "path": "/users/{userId}/sales/{saleId}",
+        "definition": {
+          "entityName": "Sale",
+          "schema": {
+            "$ref": "#/entities/Sale"
+          },
+          "description": "Sales records for a user."
+        }
+      },
+      {
+        "path": "/users/{userId}/expenses/{expenseId}",
+        "definition": {
+          "entityName": "Expense",
+          "schema": {
+            "$ref": "#/entities/Expense"
+          },
+          "description": "Expense records for a user."
+        }
+      },
+      {
+        "path": "/users/{userId}/logs/{logId}",
+        "definition": {
+          "entityName": "ActivityLog",
+          "schema": {
+            "$ref": "#/entities/ActivityLog"
+          },
+          "description": "Activity logs for a user."
+        }
+      },
+      {
+        "path": "/users/{userId}/employees/{employeeId}",
+        "definition": {
+          "entityName": "Employee",
+          "schema": {
+            "$ref": "#/entities/Employee"
+          },
+          "description": "Employee records for payroll."
+        }
+      }
+    ]
+  }
+}
